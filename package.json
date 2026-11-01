@@ -1,0 +1,16 @@
+{
+  "name": "writeup-test",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r exec tsc --noEmit",
+    "test": "pnpm -r --no-bail test",
+    "test:back": "pnpm --filter backend test",
+    "test:front": "pnpm --filter frontend test",
+    "test:back:w": "pnpm --filter backend test:watch",
+    "test:front:w": "pnpm --filter frontend test:watch"
+  }
+}

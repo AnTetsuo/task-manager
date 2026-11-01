@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+body {
+  background: var(--terminal-bg);
+  color: var(--terminal-fg);
+}
+
+@theme inline {
+  --color-base: var(--terminal-bg);
+  --color-fg: var(--terminal-fg);
+  --color-surface: var(--surface);
+  --color-muted: var(--muted);
+  --color-line: var(--border-color);
+  --color-primary: var(--primary);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+}

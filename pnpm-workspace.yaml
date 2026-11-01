@@ -1,0 +1,13 @@
+packages:
+  - backend
+  - frontend
+
+allowBuilds:
+  esbuild: false
+  unrs-resolver: false
+
+permissions:
+  '@trpc/client':
+    skills: false
+  '@trpc/server':
+    skills: false
