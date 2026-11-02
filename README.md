@@ -98,10 +98,10 @@ Os dois pacotes precisam ter suas dependências instaladas, pois o frontend impo
 
 A aplicação já possui valores padrão e pode ser iniciada sem configuração adicional.
 
-| Serviço | Variável | Padrão | Finalidade |
-| --- | --- | --- | --- |
-| Backend | `PORT` | `8787` | Porta da API |
-| Backend | `FRONTEND_URL` | `http://localhost:3000` | Origem permitida pelo CORS |
+| Serviço  | Variável              | Padrão                  | Finalidade                       |
+| -------- | --------------------- | ----------------------- | -------------------------------- |
+| Backend  | `PORT`                | `8787`                  | Porta da API                     |
+| Backend  | `FRONTEND_URL`        | `http://localhost:3000` | Origem permitida pelo CORS       |
 | Frontend | `NEXT_PUBLIC_API_URL` | `http://localhost:8787` | URL base usada pelo cliente tRPC |
 
 O backend lê as variáveis do ambiente (consulte `backend/.env.example`). Para configurar o frontend, use `frontend/.env.local`.
@@ -113,25 +113,25 @@ O backend lê as variáveis do ambiente (consulte `backend/.env.example`). Para 
 
 ### pnpm (na raiz do repositório)
 
-| Comando | Descrição |
-| --- | --- |
-| `pnpm dev` | Inicia backend e frontend em modo de desenvolvimento |
-| `pnpm dev:backend` | Inicia somente o backend |
-| `pnpm dev:frontend` | Inicia somente o frontend |
-| `pnpm build` | Compila os dois pacotes |
-| `pnpm typecheck` | Verifica os tipos dos dois pacotes |
-| `pnpm test` | Executa todos os testes |
-| `pnpm test:back` | Executa somente os testes do backend |
-| `pnpm test:front` | Executa somente os testes do frontend |
+| Comando             | Descrição                                            |
+| ------------------- | ---------------------------------------------------- |
+| `pnpm dev`          | Inicia backend e frontend em modo de desenvolvimento |
+| `pnpm dev:backend`  | Inicia somente o backend                             |
+| `pnpm dev:frontend` | Inicia somente o frontend                            |
+| `pnpm build`        | Compila os dois pacotes                              |
+| `pnpm typecheck`    | Verifica os tipos dos dois pacotes                   |
+| `pnpm test`         | Executa todos os testes                              |
+| `pnpm test:back`    | Executa somente os testes do backend                 |
+| `pnpm test:front`   | Executa somente os testes do frontend                |
 
 ### npm / yarn (dentro de `backend/` ou `frontend/`)
 
-| npm | yarn | Descrição |
-| --- | --- | --- |
-| `npm run dev` | `yarn dev` | Inicia o servidor de desenvolvimento |
-| `npm run build` | `yarn build` | Gera a versão de produção |
-| `npm start` | `yarn start` | Inicia a versão de produção compilada |
-| `npm test` | `yarn test` | Executa os testes do pacote uma vez |
+| npm             | yarn         | Descrição                             |
+| --------------- | ------------ | ------------------------------------- |
+| `npm run dev`   | `yarn dev`   | Inicia o servidor de desenvolvimento  |
+| `npm run build` | `yarn build` | Gera a versão de produção             |
+| `npm start`     | `yarn start` | Inicia a versão de produção compilada |
+| `npm test`      | `yarn test`  | Executa os testes do pacote uma vez   |
 
 </details>
 
@@ -157,22 +157,6 @@ yarn test task-form              # yarn
 </details>
 
 <details>
-<summary>Build de produção</summary>
-
-```bash
-# pnpm
-pnpm build
-pnpm --filter backend start    # node dist/index.js
-pnpm --filter frontend start   # next start
-
-# npm ou yarn: execute dentro de cada pacote
-cd backend  && npm run build && npm start     # ou: yarn build && yarn start
-cd frontend && npm run build && npm start     # ou: yarn build && yarn start
-```
-
-</details>
-
-<details>
 <summary>Como funciona</summary>
 
 - **Tipos compartilhados:** o frontend importa somente o tipo `AppRouter` do backend; o código do backend não é incluído no bundle do frontend. Alterações nos procedures são refletidas nos tipos e podem revelar incompatibilidades durante a compilação.
@@ -187,12 +171,12 @@ cd frontend && npm run build && npm start     # ou: yarn build && yarn start
 
 Todos os procedures ficam em `tasks` e são acessados em `/trpc`:
 
-| Procedure | Tipo | Entrada |
-| --- | --- | --- |
-| `tasks.list` | Query | `{ cursor?, limit? }` (objeto opcional; limite padrão: `5`) |
-| `tasks.create` | Mutation | `{ title, description? }` |
-| `tasks.update` | Mutation | `{ id, title, description? }` |
-| `tasks.delete` | Mutation | `id` |
+| Procedure      | Tipo     | Entrada                                                     |
+| -------------- | -------- | ----------------------------------------------------------- |
+| `tasks.list`   | Query    | `{ cursor?, limit? }` (objeto opcional; limite padrão: `5`) |
+| `tasks.create` | Mutation | `{ title, description? }`                                   |
+| `tasks.update` | Mutation | `{ id, title, description? }`                               |
+| `tasks.delete` | Mutation | `id`                                                        |
 
 IDs desconhecidos geram um erro tRPC com código `NOT_FOUND` nas operações de edição e exclusão.
 
