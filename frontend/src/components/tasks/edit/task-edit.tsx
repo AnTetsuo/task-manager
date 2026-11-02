@@ -1,21 +1,21 @@
 "use client";
 
-import { trpc } from "@/lib/trpc";
-import { useRouter } from "next/navigation";
+import { trpc, type Task } from "@/lib/trpc";
 import { useRef, useState } from "react";
 
 export default function EditBtn({
   taskId,
   title,
   description,
+  onChanged,
 }: {
   taskId: number;
   title: string;
   description?: string;
+  onChanged: (task: Task) => void | Promise<void>;
 }) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const router = useRouter();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   async function save(e: React.SubmitEvent<HTMLFormElement>) {
@@ -25,13 +25,13 @@ export default function EditBtn({
     setError(null);
 
     try {
-      await trpc.tasks.update.mutate({
+      const updatedTask = await trpc.tasks.update.mutate({
         id: taskId,
         title: String(data.get("title")),
         description: String(data.get("description")),
       });
       dialogRef.current?.close();
-      router.refresh();
+      await onChanged(updatedTask);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {

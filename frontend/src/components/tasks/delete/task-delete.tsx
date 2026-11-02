@@ -2,12 +2,16 @@
 
 import { trpc } from "@/lib/trpc";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
-export default function DeleteBtn({ taskId }: { taskId: number }) {
+export default function DeleteBtn({
+  taskId,
+  onDeleted,
+}: {
+  taskId: number;
+  onDeleted: (taskId: number) => void;
+}) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const router = useRouter();
 
   async function deleteTask() {
     setSaving(true);
@@ -15,7 +19,7 @@ export default function DeleteBtn({ taskId }: { taskId: number }) {
 
     try {
       await trpc.tasks.delete.mutate(taskId);
-      router.refresh();
+      onDeleted(taskId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {

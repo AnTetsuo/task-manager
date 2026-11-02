@@ -3,12 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import EditBtn from "./task-edit";
 
-const { refresh, mutate } = vi.hoisted(() => ({
-  refresh: vi.fn(),
+const { onChanged, mutate } = vi.hoisted(() => ({
+  onChanged: vi.fn(),
   mutate: vi.fn(),
 }));
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 vi.mock("@/lib/trpc", () => ({
   trpc: { tasks: { update: { mutate } } },
 }));
@@ -18,7 +17,14 @@ beforeEach(() => {
 });
 
 function setup() {
-  render(<EditBtn taskId={1} title="old title" description="old desc" />);
+  render(
+    <EditBtn
+      taskId={1}
+      title="old title"
+      description="old desc"
+      onChanged={onChanged}
+    />,
+  );
   const dialog = document.querySelector("dialog")!;
   return { dialog };
 }
@@ -41,8 +47,13 @@ describe("Edit a Task", () => {
     expect(screen.getByDisplayValue("old desc")).toBeInTheDocument();
   });
 
-  it("sends the edited values, closes the dialog and refreshes", async () => {
-    mutate.mockResolvedValue({});
+  it("sends the edited values, closes the dialog and reports the update", async () => {
+    mutate.mockResolvedValue({
+      id: 1,
+      title: "new title",
+      description: "new desc",
+      createdAt: "2026-11-01T00:00:00.000Z",
+    });
     const { dialog } = setup();
     await userEvent.click(screen.getByRole("button", { name: "Edit" }));
 
@@ -54,7 +65,7 @@ describe("Edit a Task", () => {
     await userEvent.type(description, "new desc");
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
 
-    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(onChanged).toHaveBeenCalledTimes(1));
     expect(mutate).toHaveBeenCalledWith({
       id: 1,
       title: "new title",
@@ -82,7 +93,7 @@ describe("Edit a Task", () => {
 
     expect(await screen.findByText("Task 1 not found")).toBeInTheDocument();
     expect(dialog).toHaveAttribute("open");
-    expect(refresh).not.toHaveBeenCalled();
+    expect(onChanged).not.toHaveBeenCalled();
   });
 
   it("re-enables Save after a failed update", async () => {

@@ -1,19 +1,42 @@
 import z from "zod";
 import { publicProcedure, router } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { taskData } from "../data/task-seed";
 
-type Task = {
+export type Task = {
   id: number;
   title: string;
   description?: string;
   createdAt: string;
 };
 
-const tasks: Task[] = [];
-let id = 0;
+const tasks = taskData;
+let id = taskData.length + 1;
 
 export const tasksRouter = router({
-  list: publicProcedure.query(() => tasks),
+  list: publicProcedure
+    .input(
+      z
+        .object({
+          cursor: z.number().int().min(0).optional(),
+          limit: z.number().int().min(1).max(10).default(5),
+        })
+        .optional(),
+    )
+    .query(({ input }) => {
+      const { cursor, limit = 5 } = input ?? {};
+      const start = cursor ?? 0;
+      const projection = tasks.slice(start, start + limit);
+      const nextCursor =
+        start + projection.length < tasks.length
+          ? start + projection.length
+          : null;
+      const result = {
+        tasks: projection,
+        nextCursor: nextCursor ?? null,
+      };
+      return result;
+    }),
 
   create: publicProcedure
     .input(
@@ -75,4 +98,5 @@ export const tasksRouter = router({
 
 export const resetTasks = () => {
   tasks.length = 0;
+  id = 0;
 };
