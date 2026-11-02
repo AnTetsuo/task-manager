@@ -15,13 +15,20 @@ export default function TaskForm() {
 
   async function add(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSaving(true);
     setError(null);
-    if (!title.trim()) return;
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle) {
+      setError(
+        "Title is required, and needs to be at least 1 and max 280 character(s) long",
+      );
+      return;
+    }
+
+    setSaving(true);
 
     try {
       await trpc.tasks.create.mutate({
-        title,
+        title: trimmedTitle,
         description,
       });
       setTitle("");

@@ -16,19 +16,20 @@ export default function EditBtn({
 }) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [formTitle, setFormTitle] = useState(title);
+  const [formDescription, setFormDescription] = useState(description ?? "");
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   async function save(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
     setSaving(true);
     setError(null);
 
     try {
       const updatedTask = await trpc.tasks.update.mutate({
         id: taskId,
-        title: String(data.get("title")),
-        description: String(data.get("description")),
+        title: formTitle,
+        description: formDescription,
       });
       dialogRef.current?.close();
       await onChanged(updatedTask);
@@ -45,6 +46,8 @@ export default function EditBtn({
         className="button is-primary"
         onClick={() => {
           setError(null);
+          setFormTitle(title);
+          setFormDescription(description ?? "");
           dialogRef.current?.showModal();
         }}
       >
@@ -62,7 +65,8 @@ export default function EditBtn({
             Title
             <input
               name="title"
-              defaultValue={title}
+              value={formTitle}
+              onChange={(e) => setFormTitle(e.target.value)}
               required
               className="border border-line bg-base px-3 py-2 text-fg placeholder:text-muted focus:border-primary focus:outline-none"
             />
@@ -72,7 +76,8 @@ export default function EditBtn({
             Description
             <textarea
               name="description"
-              defaultValue={description}
+              value={formDescription}
+              onChange={(e) => setFormDescription(e.target.value)}
               rows={4}
               className="resize-none border border-line bg-base px-3 py-2 text-fg placeholder:text-muted focus:border-primary focus:outline-none"
             />
@@ -84,9 +89,10 @@ export default function EditBtn({
             <button
               type="button"
               className="button"
-              onClick={(e) => {
+              onClick={() => {
                 dialogRef.current?.close();
-                e.currentTarget.form?.reset();
+                setFormTitle(title);
+                setFormDescription(description ?? "");
               }}
             >
               Cancel

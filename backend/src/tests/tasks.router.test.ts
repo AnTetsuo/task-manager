@@ -45,14 +45,14 @@ describe("task router", () => {
 
     await expect(caller.list({ limit: 2 })).resolves.toMatchObject({
       tasks: [
-        expect.objectContaining({ title: "first" }),
+        expect.objectContaining({ title: "third" }),
         expect.objectContaining({ title: "second" }),
       ],
       nextCursor: 2,
     });
 
     await expect(caller.list({ cursor: 2, limit: 2 })).resolves.toMatchObject({
-      tasks: [expect.objectContaining({ title: "third" })],
+      tasks: [expect.objectContaining({ title: "first" })],
       nextCursor: null,
     });
   });

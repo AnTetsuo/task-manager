@@ -10,8 +10,12 @@ export type Task = {
   createdAt: string;
 };
 
-const tasks = taskData;
-let id = taskData.length + 1;
+const tasks = [...taskData].sort(
+  (firstTask, secondTask) =>
+    new Date(secondTask.createdAt).getTime() -
+    new Date(firstTask.createdAt).getTime(),
+);
+let id = taskData.length;
 
 export const tasksRouter = router({
   list: publicProcedure
@@ -53,7 +57,7 @@ export const tasksRouter = router({
         description: input.description,
         createdAt: new Date().toISOString(),
       };
-      tasks.push(task);
+      tasks.unshift(task);
       return task;
     }),
 
